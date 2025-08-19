@@ -94,8 +94,15 @@ class WhatsappController extends Controller
     // Mostrar inbox (historial)
     public function inbox()
     {
-        // últimos 100 mensajes, orden descendente por fecha
-        $messages = Message::orderBy('received_at', 'desc')->paginate(50);
-        return view('inbox', compact('messages'));
+        $accountSid = env('TWILIO_SID');
+        $authToken  = env('TWILIO_AUTH_TOKEN');
+        $fromWa     = env('TWILIO_WHATSAPP_FROM');
+
+        $client = new Client($accountSid, $authToken);
+
+        // Traer últimos 100 mensajes recibidos
+        $messages = $client->messages->read(['to' => $fromWa], 100);
+
+        return view('inbox', compact('messages', 'fromWa'));
     }
 }

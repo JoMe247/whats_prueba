@@ -1,55 +1,38 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inbox WhatsApp</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>WA (API)</title>
+    <style>
+        table { border-collapse: collapse; width: 100% }
+        td, th { border: 1px solid #ccc; padding: 6px }
+        th { background: #f4f4f4 }
+        code { background: #f8f8f8; border: 1px solid #eee; padding: 1px 4px }
+    </style>
 </head>
-<body class="bg-light">
-  <div class="container py-4">
-    <h2 class="mb-4">Inbox / Historial</h2>
-
-    <div class="mb-3">
-      <a href="{{ route('whatsapp.send') }}" class="btn btn-success">✉️ Enviar mensaje</a>
-    </div>
-
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <table class="table table-sm table-striped">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Dirección</th>
-              <th>Desde</th>
-              <th>Para</th>
-              <th>Mensaje</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse($messages as $m)
-              <tr>
-                <td>{{ $m->id }}</td>
-                <td>{{ $m->direction }}</td>
-                <td>{{ $m->from }}</td>
-                <td>{{ $m->to }}</td>
-                <td style="max-width:400px;white-space:pre-wrap;">{{ $m->body }}</td>
-                <td>{{ $m->received_at ? $m->received_at->format('Y-m-d H:i:s') : $m->created_at->format('Y-m-d H:i:s') }}</td>
-              </tr>
-            @empty
-              <tr>
-                <td colspan="6" class="text-center text-muted">No hay mensajes</td>
-              </tr>
-            @endforelse
-          </tbody>
-        </table>
-
-        <div>
-          {{ $messages->links() }}
-        </div>
-      </div>
-    </div>
-  </div>
+<body>
+    <h1>Mensajes (API) — hacia {{ $fromWa }}</h1>
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Body</th>
+            <th>Direction</th>
+            <th>SID</th>
+        </tr>
+        @foreach ($messages as $m)
+            @if ($m->direction === 'inbound')
+                <tr>
+                    <td>{{ optional($m->dateSent ?: $m->dateCreated)->format('Y-m-d H:i:s') }}</td>
+                    <td>{{ $m->from }}</td>
+                    <td>{{ $m->to }}</td>
+                    <td>{!! nl2br(e($m->body)) !!}</td>
+                    <td>{{ $m->direction }}</td>
+                    <td><code>{{ $m->sid }}</code></td>
+                </tr>
+            @endif
+        @endforeach
+    </table>
 </body>
 </html>

@@ -15,3 +15,7 @@ Route::get('/inbox', [WhatsappController::class, 'inbox'])->name('whatsapp.inbox
 
 // Webhook endpoint (publica, Twilio hará POST aquí)
 Route::post('/api/twilio/webhook', [WhatsappController::class, 'webhook'])->name('whatsapp.webhook');
+
+// API para obtener mensajes recibidos
+
+
